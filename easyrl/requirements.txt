@@ -1,0 +1,13 @@
+gym>=0.15.3
+ipython>=7.8.0
+numpy>=1.16.0
+matplotlib>=2.2.2
+colorlog>=4.0.2
+opencv-python>=4.1.1.26
+cloudpickle
+gitpython
+tensorboard
+tqdm
+dataclasses;python_version < '3.7'
+pyyaml
+gputil

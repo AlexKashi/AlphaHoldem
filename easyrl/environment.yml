@@ -1,0 +1,13 @@
+name: easyrl
+channels:
+  - conda-forge
+  - pytorch
+  - anaconda
+dependencies:
+  - python=3.7
+  - pytorch=1.5
+  - cudatoolkit=10.2
+  - torchvision=0.6
+  - pip
+  - pip:
+      - -e .

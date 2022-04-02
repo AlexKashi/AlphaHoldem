@@ -1,0 +1,14 @@
+pandas
+pytest
+pylint
+pydocstyle
+gym
+numpy
+matplotlib
+pyglet
+keras-rl2
+docopt
+tensorflow==2.3.2
+tensorboard
+pybind11
+cppimport
