@@ -159,7 +159,10 @@ class HoldemTable(Env):
         self.action_space = Discrete(len(Action) - 2)
         self.first_action_for_hand = None
 
-    def reset(self):
+    def initialStep(self):
+        if self._agent_is_autoplay() and not self.done:
+            self.step('initial_player_autoplay')  # kick off the first action after bb by an autoplay agent
+    def reset(self, initialStep = True):
         """Reset after game over."""
         self.observation = None
         self.reward = None
@@ -177,7 +180,7 @@ class HoldemTable(Env):
         self._start_new_hand()
         self._get_environment()
         # auto play for agents where autoplay is set
-        if self._agent_is_autoplay() and not self.done:
+        if self._agent_is_autoplay() and not self.done and initialStep:
             self.step('initial_player_autoplay')  # kick off the first action after bb by an autoplay agent
 
         return self.array_everything

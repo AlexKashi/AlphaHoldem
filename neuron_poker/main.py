@@ -206,37 +206,77 @@ class SelfPlay:
         env.add_player(RandomPlayer())
         env.add_player(RandomPlayer())
         env.add_player(RandomPlayer())
+        self.env = env
+        # dqnAgent = DQNPlayer(env = env)
+        # self.env.add_player(dqnAgent)
+        # #Have to delay step so that we can find the size of the env
+        # self.env.reset(initialStep = False)
+        # dqnAgent.initiate_agent(self.env)
+        # dqnAgent.train(env_name=model_name)
+
+
+
+
         env.add_player(PlayerShell(name='keras-rl', stack_size=self.stack))  # shell is used for callback to keras rl
 
         env.reset()
 
-        dqn = DQNPlayer()
-        dqn.initiate_agent(env)
+        dqn = DQNPlayer(env = self.env)
+        dqn.initiate_agent(self.env)
         dqn.train(env_name=model_name)
 
     def ppo_train(self, model_name):
-        from agents.agent_custom import Player as CustomPlayer
+        from agents.agent_ppo import Player as PPOPlayer
         from agents.agent_consider_equity import Player as EquityPlayer
         from agents.agent_keras_rl_dqn import Player as DQNPlayer
         from agents.agent_random import Player as RandomPlayer
         env_name = 'neuron_poker-v0'
-        env = gym.make(env_name, initial_stacks=self.stack, funds_plot=self.funds_plot, render=self.render,
+
+        self.env = gym.make(env_name, initial_stacks=self.stack, funds_plot=self.funds_plot, render=self.render,
                        use_cpp_montecarlo=self.use_cpp_montecarlo)
 
         np.random.seed(123)
-        env.seed(123)
-        env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
-        env.add_player(EquityPlayer(name='equity/20/30', min_call_equity=.2, min_bet_equity=.3))
-        env.add_player(RandomPlayer())
-        env.add_player(RandomPlayer())
-        env.add_player(RandomPlayer())
-        env.add_player(PlayerShell(name='keras-rl', stack_size=self.stack))  # shell is used for callback to keras rl
+        self.env.seed(123)
+        # self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
+        # self.env.add_player(EquityPlayer(name='equity/20/30', min_call_equity=.2, min_bet_equity=.3))
+        # self.env.add_player(RandomPlayer())
+        # self.env.add_player(RandomPlayer())
+        self.env.add_player(RandomPlayer())
+        ppoAgent = PPOPlayer(name = model_name)
 
-        env.reset()
+        self.env.add_player(ppoAgent)
+        #Have to delay step so that we can find the size of the env
+        self.env.reset(initialStep = False)
+        ppoAgent.initiate_agent(self.env)
+        # Now complete the first step
+        # self.env.initialStep()
 
-        custom = CustomPlayer()
-        custom.initiate_agent(env)
-        custom.train(env_name=model_name)
+        ppoAgent.train(env_name=model_name)
+
+
+
+    def ppo_play(self, model_name):
+        """Create 6 players, one of them a trained DQN"""
+        from agents.agent_ppo import Player as PPOPlayer
+        from agents.agent_consider_equity import Player as EquityPlayer
+        from agents.agent_keras_rl_dqn import Player as DQNPlayer
+        from agents.agent_random import Player as RandomPlayer
+        env_name = 'neuron_poker-v0'
+
+        self.env = gym.make(env_name, initial_stacks=self.stack, render=self.render)
+        self.env.add_player(EquityPlayer(name='equity/50/50', min_call_equity=.5, min_bet_equity=.5))
+        self.env.add_player(EquityPlayer(name='equity/50/80', min_call_equity=.8, min_bet_equity=.8))
+        self.env.add_player(EquityPlayer(name='equity/70/70', min_call_equity=.7, min_bet_equity=.7))
+        self.env.add_player(EquityPlayer(name='equity/20/30', min_call_equity=.2, min_bet_equity=.3))
+        self.env.add_player(RandomPlayer())
+        ppoAgent = PPOPlayer(name = model_name)
+
+        self.env.add_player(ppoAgent)
+        #Have to delay step so that we can find the size of the env
+        self.env.reset(initialStep = False)
+        ppoAgent.initiate_agent(self.env)
+        # Now complete the first step
+        self.env.initialStep()
 
 
 
@@ -258,6 +298,8 @@ class SelfPlay:
 
         dqn = DQNPlayer(load_model=model_name, env=self.env)
         dqn.play(nb_episodes=self.num_episodes, render=self.render)
+
+
 
     def dqn_train_custom_q1(self):
         """Create 6 players, 4 of them equity based, 2 of them random"""

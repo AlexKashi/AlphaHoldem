@@ -9,6 +9,7 @@ from gym_env import env
 
 
 #added from easyrl
+import gym
 from pathlib import Path
 import torch
 from torch import nn
@@ -31,7 +32,7 @@ from easyrl.utils.common import load_from_json
 class Player:
     """Mandatory class with the player methods"""
 
-    def __init__(self, name='Custom_Q1'):
+    def __init__(self, name):
         """Initiaization of an agent"""
         self.equity_alive = 0
         self.actions = []
@@ -47,16 +48,21 @@ class Player:
         cfg.alg.log_interval = 1
         cfg.alg.eval_interval = 20
         
-        cfg.alg.max_steps = 100000
+        cfg.alg.max_steps = 1
 
 
 
      #   self.env = make_vec_env(name,1)
 
     def initiate_agent(self, env):
-        self.env = env 
-        nb_obs = env.observation_space[0]
-        nb_actions = env.action_space.n
+        self.env = env
+
+        def wrapper():
+            return self.env
+        self.envwrapped = DummyVecEnv([wrapper])
+
+        nb_obs = self.env.observation_space[0]
+        nb_actions = self.env.action_space.n
         cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         cfg.alg.env_name = "name"
         cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
@@ -69,7 +75,7 @@ class Player:
         # self.model.add(Dense(512, activation='relu'))
         # self.model.add(Dropout(0.2))
         # self.model.add(Dense(nb_actions, activation='linear'))
-        print(env.observation_space)
+        print(self.env.observation_space)
         actor_body = MLP(input_size=nb_obs,
                          hidden_sizes=[64, 64],
                          output_size=64,
@@ -81,12 +87,27 @@ class Player:
                          output_size=64,
                          hidden_act=nn.Tanh,
                          output_act=nn.Tanh)
-        self.actor = CategoricalPolicy(actor_body,
-                                 in_features=64,
-                                 action_dim=nb_actions)            
+
+
+        if isinstance(env.action_space, gym.spaces.Discrete):
+            act_size = env.action_space.n
+            self.actor = CategoricalPolicy(actor_body,
+                                     in_features=64,
+                                     action_dim=act_size)
+        elif isinstance(env.action_space, gym.spaces.Box):
+            act_size = env.action_space.shape[0]
+            self.actor = DiagGaussianPolicy(actor_body,
+                                       in_features=64,
+                                       action_dim=act_size,
+                                       tanh_on_dist=cfg.alg.tanh_on_dist,
+                                       std_cond_in=cfg.alg.std_cond_in)
+        else:
+            raise TypeError(f'Unknown action space type: {env.action_space}')
+
+           
         self.critic = ValueNet(critic_body, in_features=64)
-
-
+        self.agent = PPOAgent(actor=self.actor, critic=self.critic, env=self.envwrapped)
+        print("SETING AsdsdfsdffsdGENT", self.agent)
         # # Finally, we configure and compile our agent. You can use every built-in Keras optimizer and
         # # even the metrics!
         # memory = SequentialMemory(limit=memory_limit, window_length=window_length)  # pylint: disable=unused-variable
@@ -96,6 +117,8 @@ class Player:
     def train(self, env_name):
         """Train a model"""
         # initiate training loop
+
+
         timestr = time.strftime("%Y%m%d-%H%M%S") + "_" + str(env_name)
         # tensorboard = TensorBoard(log_dir='./Graph/{}'.format(timestr), histogram_freq=0, write_graph=True,
         #                           write_images=False)
@@ -107,17 +130,11 @@ class Player:
         #                    1)
 
 
-        def wrapper():
-            return self.env
-        env = DummyVecEnv([wrapper])
-
-        self.agent = PPOAgent(actor=self.actor, critic=self.critic, env=env)
-
-        runner = EpisodicRunner(agent=self.agent, env=env)
+        runner = EpisodicRunner(agent=self.agent, env=self.envwrapped)
         engine = PPOEngine(agent=self.agent,
                            runner=runner)
         engine.train()
-
+        assert False
 
 
         # # Save the architecture
@@ -132,22 +149,13 @@ class Player:
         # self.dqn.test(self.env, nb_episodes=5, visualize=False)
 
 
+
+
+
     def action(self, action_space, observation, info):  # pylint: disable=no-self-use,unused-argument
         """Mandatory method that calculates the move based on the observation array and the action space."""
         _ = (observation, info)  # not using the observation for random decision
-        action = None
 
-        self.initiate_agent(4)
-
-        # decide if explore or explot
-
-        # forward
-
-        # save to memory
-
-        # backward
-        # decide what to use for training
-        # update model
-        # save weights
+        action = self.agent.get_action(observation)[0].tolist()
 
         return action

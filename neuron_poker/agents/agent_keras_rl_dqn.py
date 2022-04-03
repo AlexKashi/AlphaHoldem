@@ -5,6 +5,7 @@ import time
 
 import numpy as np
 
+
 from gym_env.env import Action
 
 import tensorflow as tf
@@ -26,7 +27,7 @@ window_length = 1
 nb_max_start_steps = 1  # random action
 train_interval = 100  # train every 100 steps
 nb_steps_warmup = 50  # before training starts, should be higher than start steps
-nb_steps = 100000
+nb_steps = 10
 memory_limit = int(nb_steps / 2)
 batch_size = 500  # items sampled from memory to train
 enable_double_dqn = False
@@ -100,16 +101,16 @@ class Player:
         self.dqn.fit(self.env, nb_max_start_steps=nb_max_start_steps, nb_steps=nb_steps, visualize=False, verbose=2,
                      start_step_policy=self.start_step_policy, callbacks=[tensorboard])
 
-        # Save the architecture
-        dqn_json = self.model.to_json()
-        with open("dqn_{}_json.json".format(env_name), "w") as json_file:
-            json.dump(dqn_json, json_file)
+        # # Save the architecture
+        # dqn_json = self.model.to_json()
+        # with open("dqn_{}_json.json".format(env_name), "w") as json_file:
+        #     json.dump(dqn_json, json_file)
 
-        # After training is done, we save the final weights.
-        self.dqn.save_weights('dqn_{}_weights.h5'.format(env_name), overwrite=True)
+        # # After training is done, we save the final weights.
+        # self.dqn.save_weights('dqn_{}_weights.h5'.format(env_name), overwrite=True)
 
-        # Finally, evaluate our algorithm for 5 episodes.
-        self.dqn.test(self.env, nb_episodes=5, visualize=False)
+        # # Finally, evaluate our algorithm for 5 episodes.
+        # self.dqn.test(self.env, nb_episodes=5, visualize=False)
 
     def load(self, env_name):
         """Load a model"""
@@ -161,7 +162,9 @@ class Player:
                                     Action.RAISE_2POT}
         _ = this_player_action_space.intersection(set(action_space))
 
-        action = None
+        action = self.dqn.forward(observation)
+
+        # action = None
         return action
 
 
