@@ -48,7 +48,7 @@ class Player:
         cfg.alg.log_interval = 1
         cfg.alg.eval_interval = 20
         
-        cfg.alg.max_steps = 1
+        cfg.alg.max_steps = -1
 
 
 
@@ -107,7 +107,6 @@ class Player:
            
         self.critic = ValueNet(critic_body, in_features=64)
         self.agent = PPOAgent(actor=self.actor, critic=self.critic, env=self.envwrapped)
-        print("SETING AsdsdfsdffsdGENT", self.agent)
         # # Finally, we configure and compile our agent. You can use every built-in Keras optimizer and
         # # even the metrics!
         # memory = SequentialMemory(limit=memory_limit, window_length=window_length)  # pylint: disable=unused-variable
@@ -134,7 +133,7 @@ class Player:
         engine = PPOEngine(agent=self.agent,
                            runner=runner)
         engine.train()
-        assert False
+        # assert False
 
 
         # # Save the architecture
@@ -157,5 +156,5 @@ class Player:
         _ = (observation, info)  # not using the observation for random decision
 
         action = self.agent.get_action(observation)[0].tolist()
-
+        return None
         return action

@@ -5,7 +5,6 @@ import time
 
 import numpy as np
 
-
 from gym_env.env import Action
 
 import tensorflow as tf
@@ -27,7 +26,7 @@ window_length = 1
 nb_max_start_steps = 1  # random action
 train_interval = 100  # train every 100 steps
 nb_steps_warmup = 50  # before training starts, should be higher than start steps
-nb_steps = 10
+nb_steps = 100000
 memory_limit = int(nb_steps / 2)
 batch_size = 500  # items sampled from memory to train
 enable_double_dqn = False
@@ -101,26 +100,30 @@ class Player:
         self.dqn.fit(self.env, nb_max_start_steps=nb_max_start_steps, nb_steps=nb_steps, visualize=False, verbose=2,
                      start_step_policy=self.start_step_policy, callbacks=[tensorboard])
 
-        # # Save the architecture
-        # dqn_json = self.model.to_json()
-        # with open("dqn_{}_json.json".format(env_name), "w") as json_file:
-        #     json.dump(dqn_json, json_file)
+        # Save the architecture
+        dqn_json = self.model.to_json()
+        with open("output/dqn_{}_{}_json.json".format(env_name, timestr), "w+") as json_file:
+            json.dump(dqn_json, json_file)
 
-        # # After training is done, we save the final weights.
-        # self.dqn.save_weights('dqn_{}_weights.h5'.format(env_name), overwrite=True)
+        # After training is done, we save the final weights.
+        self.dqn.save_weights('output/dqn_{}_{}_weights.h5'.format(env_name, timestr), overwrite=True)
 
-        # # Finally, evaluate our algorithm for 5 episodes.
-        # self.dqn.test(self.env, nb_episodes=5, visualize=False)
+        # Finally, evaluate our algorithm for 5 episodes.
+        self.dqn.test(self.env, nb_episodes=5, visualize=False)
 
     def load(self, env_name):
         """Load a model"""
+        print("LOADING HERE")
+        # assert False
+
+        fileName = "output/dqn_dqn1_300k"
 
         # Load the architecture
-        with open('dqn_{}_json.json'.format(env_name), 'r') as architecture_json:
+        with open('{}_json.json'.format(fileName), 'r') as architecture_json:
             dqn_json = json.load(architecture_json)
 
         self.model = model_from_json(dqn_json)
-        self.model.load_weights('dqn_{}_weights.h5'.format(env_name))
+        self.model.load_weights('{}_weights.h5'.format(fileName))
 
     def play(self, nb_episodes=5, render=False):
         """Let the agent play"""
@@ -162,9 +165,7 @@ class Player:
                                     Action.RAISE_2POT}
         _ = this_player_action_space.intersection(set(action_space))
 
-        action = self.dqn.forward(observation)
-
-        # action = None
+        action = None
         return action
 
 
