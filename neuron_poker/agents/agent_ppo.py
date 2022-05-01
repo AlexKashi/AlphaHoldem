@@ -44,12 +44,14 @@ class Player:
 
         set_config('ppo')
         cfg.alg.num_envs = 1
-        cfg.alg.episode_steps = 1024
+        cfg.alg.episode_steps = 16
         cfg.alg.log_interval = 1
-        cfg.alg.eval_interval = 20
-        
+        cfg.alg.eval_interval = 1
         cfg.alg.max_steps = 100
-
+        cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        cfg.alg.env_name = "name"
+        cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
+        cfg.alg.save_dir += '/' + "name"
 
 
      #   self.env = make_vec_env(name,1)
@@ -63,10 +65,7 @@ class Player:
 
         nb_obs = self.env.observation_space[0]
         nb_actions = self.env.action_space.n
-        cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        cfg.alg.env_name = "name"
-        cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
-        cfg.alg.save_dir += '/' + "name"
+
         # self.model = Sequential()
         # self.model.add(Dense(512, activation='relu', input_shape=env.observation_space))  # pylint: disable=no-member
         # self.model.add(Dropout(0.2))
@@ -75,7 +74,7 @@ class Player:
         # self.model.add(Dense(512, activation='relu'))
         # self.model.add(Dropout(0.2))
         # self.model.add(Dense(nb_actions, activation='linear'))
-        assert False
+     #   assert False
         actor_body = MLP(input_size=nb_obs,
                          hidden_sizes=[64, 64],
                          output_size=64,
@@ -87,7 +86,7 @@ class Player:
                          output_size=64,
                          hidden_act=nn.Tanh,
                          output_act=nn.Tanh)
-        assert False
+ 
 
         if isinstance(env.action_space, gym.spaces.Discrete):
             act_size = env.action_space.n

@@ -252,7 +252,7 @@ class SelfPlay:
 
         ppoAgent = PPOPlayer(name = model_name)
         ppoAgent.initiate_agent(self.env)
-        assert False
+    
         ppoAgent.train(env_name = model_name)
 
 
