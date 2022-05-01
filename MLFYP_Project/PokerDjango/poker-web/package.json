@@ -1,0 +1,68 @@
+{
+  "name": "poker-web",
+  "version": "0.1.0",
+  "private": "true",
+  "proxy": "http://localhost:8000",
+  "resolutions": {
+    "styled-components": "^5"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
+    "bootstrap": "^5.0.2",
+    "jquery": "^3.6.0",
+    "js-cookie": "^2.2.1",
+    "react": "^16.14.0",
+    "react-bootstrap": "^1.0.1",
+    "react-dom": "^16.14.0",
+    "react-poker": "file:./dependencies/react-poker",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^1.1.5",
+    "reactstrap": "^8.9.0",
+    "styled-components": "^5.3.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "webpack --config webpack.config.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "static-cleanup": "python3 cleanup_post_build.py && echo 'Static files have been cleaned up'"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/plugin-transform-react-constant-elements": "^7.14.5",
+    "@babel/plugin-transform-react-inline-elements": "^7.14.5",
+    "@babel/plugin-transform-runtime": "^7.14.5",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/runtime": "^7.14.8",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "css-loader": "^0.28.7",
+    "mini-css-extract-plugin": "^2.1.0",
+    "style-loader": "^0.19.0",
+    "ts-loader": "^9.2.4",
+    "webpack": "^5.47.0",
+    "webpack-cli": "^4.7.2"
+  }
+}

@@ -26,13 +26,13 @@ window_length = 1
 nb_max_start_steps = 1  # random action
 train_interval = 100  # train every 100 steps
 nb_steps_warmup = 50  # before training starts, should be higher than start steps
-nb_steps = 100000
+nb_steps = 1000000
 memory_limit = int(nb_steps / 2)
 batch_size = 500  # items sampled from memory to train
 enable_double_dqn = True
-enable_dueling_network=True
+enable_dueling_network= True
 log = logging.getLogger(__name__)
-
+log.setLevel(logging.WARNING)
 
 class Player:
     """Mandatory class with the player methods"""
@@ -113,18 +113,21 @@ class Player:
 
     def load(self, env_name):
         """Load a model"""
-        print("LOADING HERE")
-        assert False
+      #  print("LOADING HERE")
+      #  assert False
 
+        #skip loading
+      #  print("SKIPPING LOADING!")
+        return
 
-        fileName = "output/dqn_dqn1_300k"
+        fileName = "output/dqn_target_dueling_v2"
 
         # Load the architecture
-        with open('{}_json.json'.format(fileName), 'r') as architecture_json:
+        with open('{}.json'.format(fileName), 'r') as architecture_json:
             dqn_json = json.load(architecture_json)
 
         self.model = model_from_json(dqn_json)
-        self.model.load_weights('{}_weights.h5'.format(fileName))
+        self.model.load_weights('{}.h5'.format(fileName))
 
     def play(self, nb_episodes=5, render=False):
         """Let the agent play"""

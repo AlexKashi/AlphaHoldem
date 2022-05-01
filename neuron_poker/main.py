@@ -55,7 +55,7 @@ def command_line_parser():
     print(f"Screenloglevel: {screenloglevel}")
     log = logging.getLogger("")
     log.info("Initializing program")
-
+    log.setLevel(logging.WARNING)
     if args['selfplay']:
         num_episodes = 1 if not args['--episodes'] else int(args['--episodes'])
         runner = SelfPlay(render=args['--render'], num_episodes=num_episodes,
@@ -108,6 +108,7 @@ class SelfPlay:
         self.num_episodes = num_episodes
         self.stack = stack
         self.log = logging.getLogger(__name__)
+        self.log.setLevel(logging.WARNING)
 
     def random_agents(self):
         """Create an environment with 6 random players"""
@@ -248,8 +249,10 @@ class SelfPlay:
         self.env.add_player(PlayerShell(name='ppo', stack_size=self.stack))  # shell is used for callback to keras rl
         self.env.reset()
 
+
         ppoAgent = PPOPlayer(name = model_name)
         ppoAgent.initiate_agent(self.env)
+        assert False
         ppoAgent.train(env_name = model_name)
 
 

@@ -48,7 +48,7 @@ class Player:
         cfg.alg.log_interval = 1
         cfg.alg.eval_interval = 20
         
-        cfg.alg.max_steps = -1
+        cfg.alg.max_steps = 100
 
 
 
@@ -75,7 +75,7 @@ class Player:
         # self.model.add(Dense(512, activation='relu'))
         # self.model.add(Dropout(0.2))
         # self.model.add(Dense(nb_actions, activation='linear'))
-        print(self.env.observation_space)
+        assert False
         actor_body = MLP(input_size=nb_obs,
                          hidden_sizes=[64, 64],
                          output_size=64,
@@ -87,7 +87,7 @@ class Player:
                          output_size=64,
                          hidden_act=nn.Tanh,
                          output_act=nn.Tanh)
-
+        assert False
 
         if isinstance(env.action_space, gym.spaces.Discrete):
             act_size = env.action_space.n
@@ -154,7 +154,7 @@ class Player:
     def action(self, action_space, observation, info):  # pylint: disable=no-self-use,unused-argument
         """Mandatory method that calculates the move based on the observation array and the action space."""
         _ = (observation, info)  # not using the observation for random decision
-
+        assert False
         action = self.agent.get_action(observation)[0].tolist()
         return None
         return action

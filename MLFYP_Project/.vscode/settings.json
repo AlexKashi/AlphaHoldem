@@ -1,0 +1,29 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "algorithm": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "xstring": "cpp",
+        "tuple": "cpp",
+        "string": "cpp",
+        "iostream": "cpp",
+        "iosfwd": "cpp",
+        "chrono": "cpp"
+    },
+    "python.linting.pylintEnabled": false,
+    "python.linting.pycodestyleEnabled": true,
+    "python.linting.enabled": false,
+    "python.pythonPath": "/home/gary/.local/share/virtualenvs/MLFYP_Project-LYM33M8n/bin/python",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./main_files",
+        "-p",
+        "*_test.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    "python.testing.unittestEnabled": false,
+    "python.testing.promptToConfigure": false
+}

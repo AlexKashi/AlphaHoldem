@@ -1,0 +1,5 @@
+<p>
+{% for object in my_objects %} 
+    {{ object }}{% if not forloop.last %},{% endif %} 
+{% endfor %}
+</p>

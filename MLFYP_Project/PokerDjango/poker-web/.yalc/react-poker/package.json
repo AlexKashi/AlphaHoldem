@@ -1,0 +1,58 @@
+{
+  "name": "react-poker",
+  "version": "0.0.76",
+  "description": "React component for dealing cards",
+  "main": "dist/react-poker.js",
+  "scripts": {
+    "build": "rm -rf dist/* && webpack -p --env.production --env.platform=web --progress --config webpack.prod.config.js",
+    "build-site": "npm run build && webpack",
+    "deploy-site": "git push origin `git subtree split --prefix site master 2> /dev/null`:gh-pages --force",
+    "test": "jest --env=jsdom"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therewillbecode/react-deck.git"
+  },
+  "keywords": [
+    "react",
+    "deck",
+    "cards",
+    "poker"
+  ],
+  "author": "therewillbecode",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/therewillbecode/react-deck/issues"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "setupFiles": [
+      "<rootDir>/config/polyfills.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>[/\\\\](build|docs|node_modules|scripts)[/\\\\]"
+    ],
+    "testEnvironment": "node",
+    "testURL": "http://localhost",
+    "transform": {
+      "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+    ],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web"
+    }
+  },
+  "homepage": "http://therewillbecode.github.io/react-poker",
+  "dependencies": {
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-motion": "^0.5.1"
+  },
+  "yalcSig": "64d71b531a8376b0f1d0eb6e82ee29af"
+}

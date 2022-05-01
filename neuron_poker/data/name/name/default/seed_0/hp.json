@@ -12,7 +12,7 @@
   "batch_size": 256,
   "save_best_only": false,
   "episode_steps": 1024,
-  "max_steps": -1,
+  "max_steps": 100,
   "smooth_eval_tau": 0.7,
   "max_saved_models": 2,
   "test": false,

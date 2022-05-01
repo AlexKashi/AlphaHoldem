@@ -45,10 +45,7 @@ def obs_space_info(obs_space):
     keys = []
     shapes = {}
     dtypes = {}
-    print(subspaces, "SUBIB")
-    print(obs_space, "OBS SPACE")
     for key, box in subspaces.items():
-        print(key, box, "FEEJEJJE")
         keys.append(key)
         shapes[key] = np.array(box)#.shape
         dtypes[key] = np.array(box).dtype

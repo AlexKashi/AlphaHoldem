@@ -1,0 +1,45 @@
+heart - 0 (Correct)
+club - 1 (Correct)
+spade - 2 (Correct)
+Diamond - 3 (Correct)
+
+
+
+2 - 0
+3 - 1
+4 - 2
+5 - 3
+6 - 4
+7 - 5 
+8 - 6
+9 - 7
+10 - 8
+J - 9
+Q - 10 
+K - 11
+A - 12
+
+
+
+4*rank + suit
+
+2h .. 4*0 + 0
+3h .. 4*1 + 0           0, 4, 8
+4h .. 4*2 + 0
+....
+2c .. 4*0 + 1
+3c .. 4*1 + 1           1, 5, 9
+4c .. 4*2 + 1
+5c .. 4*3 + 1
+
+
+.... 
+Ad .. 4*12 + 4          52
+
+cards are put in order: [2h, 2c, 2s, 2d, 3h, 3c, 3s, 3d, 4h, ... Ad]
+
+
+
+49 (J of Diamond) 
+suit = 49/53 (then get partition to classify)
+rank = suit mod partition

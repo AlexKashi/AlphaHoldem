@@ -28,8 +28,6 @@ class DummyVecEnv(VecEnv):
         super().__init__(len(env_fns), env.observation_space, env.action_space)
         obs_space = env.observation_space
         self.keys, shapes, dtypes = obs_space_info(obs_space)
-        print(shapes, "ASDKLSDJLKDJA:DLKAJDAL:KSDJA:SLDKJASD:LKAJSD:LKASDJA:LKSD")
-
 
 
         self.buf_obs = {k: np.zeros((self.num_envs,) + tuple(shapes[k]),
@@ -86,7 +84,6 @@ class DummyVecEnv(VecEnv):
         return self._obs_from_buf()
 
     def _save_obs(self, e, obs):
-        print(e, obs, "WOW")
         for k in self.keys:
             if k is None:
                 self.buf_obs[k][e] = obs

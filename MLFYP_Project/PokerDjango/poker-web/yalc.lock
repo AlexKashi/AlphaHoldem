@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "react-poker": {
+      "signature": "64d71b531a8376b0f1d0eb6e82ee29af",
+      "file": true,
+      "replaced": "file:dependencies/react-poker"
+    }
+  }
+}

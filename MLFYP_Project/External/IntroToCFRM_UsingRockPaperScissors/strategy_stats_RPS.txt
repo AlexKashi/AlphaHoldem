@@ -1,0 +1,149 @@
+
+GAME_NUMBER: 0
+	
+Player_no: p1
+	self.self_strategy: [0.33333333 0.33333333 0.33333333]
+	self.strategy_sum: [0.33333333 0.33333333 0.33333333]
+
+Player_no: p2
+	self.self_strategy: [0.33333333 0.33333333 0.33333333]
+	self.strategy_sum: [0.33333333 0.33333333 0.33333333]
+
+Player_no: p1
+	Action: ROCK
+
+Player_no: p2
+	Action: ROCK
+
+Player_no: p1
+	self.regret_sum: [ 0.  1. -1.]
+
+Player_no: p2
+	self.regret_sum: [ 0.  1. -1.]
+
+***********************************************
+GAME_NUMBER: 1
+	
+Player_no: p1
+	self.self_strategy: [0. 1. 0.]
+	self.strategy_sum: [0.33333333 1.33333333 0.33333333]
+
+Player_no: p2
+	self.self_strategy: [0. 1. 0.]
+	self.strategy_sum: [0.33333333 1.33333333 0.33333333]
+
+Player_no: p1
+	Action: PAPER
+
+Player_no: p2
+	Action: PAPER
+
+Player_no: p1
+	self.regret_sum: [-1.  1.  0.]
+
+Player_no: p2
+	self.regret_sum: [-1.  1.  0.]
+
+***********************************************
+GAME_NUMBER: 2
+	
+Player_no: p1
+	self.self_strategy: [0. 1. 0.]
+	self.strategy_sum: [0.33333333 2.33333333 0.33333333]
+
+Player_no: p2
+	self.self_strategy: [0. 1. 0.]
+	self.strategy_sum: [0.33333333 2.33333333 0.33333333]
+
+Player_no: p1
+	Action: PAPER
+
+Player_no: p2
+	Action: PAPER
+
+Player_no: p1
+	self.regret_sum: [-2.  1.  1.]
+
+Player_no: p2
+	self.regret_sum: [-2.  1.  1.]
+
+***********************************************
+GAME_NUMBER: 3
+	
+Player_no: p1
+	self.self_strategy: [0.  0.5 0.5]
+	self.strategy_sum: [0.33333333 2.83333333 0.83333333]
+
+Player_no: p2
+	self.self_strategy: [0.  0.5 0.5]
+	self.strategy_sum: [0.33333333 2.83333333 0.83333333]
+
+Player_no: p1
+	Action: PAPER
+
+Player_no: p2
+	Action: SCISSORS
+
+Player_no: p1
+	self.regret_sum: [0. 1. 2.]
+
+Player_no: p2
+	self.regret_sum: [-4.  0.  1.]
+
+***********************************************
+GAME_NUMBER: 4
+	
+Player_no: p1
+	self.self_strategy: [0.         0.33333333 0.66666667]
+	self.strategy_sum: [0.33333333 3.16666667 1.5       ]
+
+Player_no: p2
+	self.self_strategy: [0. 0. 1.]
+	self.strategy_sum: [0.33333333 2.83333333 1.83333333]
+
+Player_no: p1
+	Action: SCISSORS
+
+Player_no: p2
+	Action: SCISSORS
+
+Player_no: p1
+	self.regret_sum: [1. 0. 2.]
+
+Player_no: p2
+	self.regret_sum: [-3. -1.  1.]
+
+***********************************************
+self.strategy_sum: [0.33333333 3.16666667 1.5       ]
+
+self.strategy_sum: [0.33333333 2.83333333 1.83333333]
+
+Player_no: p1
+	Action: PAPER
+
+Player_no: p2
+	Action: PAPER
+
+Player_no: p1
+	Action: SCISSORS
+
+Player_no: p2
+	Action: SCISSORS
+
+Player_no: p1
+	Action: SCISSORS
+
+Player_no: p2
+	Action: SCISSORS
+
+Player_no: p1
+	Action: SCISSORS
+
+Player_no: p2
+	Action: SCISSORS
+
+Player_no: p1
+	Action: PAPER
+
+Player_no: p2
+	Action: PAPER

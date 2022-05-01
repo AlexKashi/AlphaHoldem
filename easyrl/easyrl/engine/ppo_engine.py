@@ -18,10 +18,11 @@ from easyrl.utils.torch_util import EpisodeDataset
 class PPOEngine(BasicEngine):
     def train(self):
         for iter_t in count():
+            print(f"Itteration {iter_t}")
+            assert False
 
 
             if iter_t % cfg.alg.eval_interval == 0:
-                print(cfg.alg.test_num)
                 det_log_info, _ = self.eval(eval_num=cfg.alg.test_num, sample=False, smooth=True)
                 sto_log_info, _ = self.eval(eval_num=cfg.alg.test_num,
                                             sample=True, smooth=False)
@@ -37,8 +38,7 @@ class PPOEngine(BasicEngine):
             traj, rollout_time = self.rollout_once(sample=True,
                                                    get_last_val=True,
                                                    time_steps=cfg.alg.episode_steps)
-            print("ITTER_t")
-            assert False
+
             train_log_info = self.train_once(traj)
             if iter_t % cfg.alg.log_interval == 0:
                 train_log_info['train/rollout_time'] = rollout_time

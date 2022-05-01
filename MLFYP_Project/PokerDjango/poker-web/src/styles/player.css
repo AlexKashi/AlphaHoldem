@@ -1,0 +1,42 @@
+.player1{
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid red;
+
+    position: relative;
+    margin-left: -200px;
+    margin-top: 120px;
+}
+
+.player2{
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid red;
+    
+    position: relative;
+    margin-left: 400px;
+    margin-top: 120px;
+}
+
+.playerTag {
+    text-align: center;
+    position: relative;
+    padding-top: 100px;
+    top: -130px;
+    right: 70px;
+    color: blue;
+}
+
+
+.holding {
+    position: relative; 
+    top: 90%;   
+    left: 32.5%;  
+}
+
+
+

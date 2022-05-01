@@ -1,0 +1,56 @@
+.main {
+    width: 1000px;
+}
+  
+.table {
+    background-color: green;
+    height: 550px;
+    width: 80%;
+    border-radius: 50%;
+    margin: 0 auto;
+    border: 1em solid black;
+}
+
+.board {
+    position: relative; 
+    top: 40%;   
+    left: 32.5%;  
+}
+.card-small {
+    border: .2em solid black;
+    border-radius: 10%;
+    height: 80px;
+    width: 56px; /*70% of height*/
+    margin-right: 5px;
+    float: left;
+    background-color: white;
+}
+
+.card-text {
+    margin: 0;
+    margin-top: 15%;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 0;
+}
+  
+.card-img {
+    text-align: center;
+    margin: auto;
+    font-size: 1.5em;
+    position: relative;
+}
+
+.red {
+    color: red; 
+}
+
+.black {
+    color: black;   
+}
+
+.heading {
+    text-align: center;
+    padding: 20px;
+}
