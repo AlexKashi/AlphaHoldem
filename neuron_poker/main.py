@@ -246,6 +246,11 @@ class SelfPlay:
         # self.env.add_player(RandomPlayer())
         self.env.add_player(RandomPlayer())
         # self.env.add_player(RandomPlayer())
+
+
+
+
+        self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
         self.env.add_player(PlayerShell(name='ppo', stack_size=self.stack))  # shell is used for callback to keras rl
         self.env.reset()
 
@@ -278,19 +283,36 @@ class SelfPlay:
         env_name = 'neuron_poker-v0'
 
         self.env = gym.make(env_name, initial_stacks=self.stack, render=self.render)
-        self.env.add_player(EquityPlayer(name='equity/50/50', min_call_equity=.5, min_bet_equity=.5))
-        self.env.add_player(EquityPlayer(name='equity/50/80', min_call_equity=.8, min_bet_equity=.8))
-        self.env.add_player(EquityPlayer(name='equity/70/70', min_call_equity=.7, min_bet_equity=.7))
-        self.env.add_player(EquityPlayer(name='equity/20/30', min_call_equity=.2, min_bet_equity=.3))
-        self.env.add_player(RandomPlayer())
-        ppoAgent = PPOPlayer(name = model_name)
+        self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
 
-        self.env.add_player(ppoAgent)
-        #Have to delay step so that we can find the size of the env
-        self.env.reset(initialStep = False)
+
+
+        self.env.add_player(PlayerShell(name='ppo', stack_size=self.stack))
+
+        self.env.reset()
+
+        ppoAgent = PPOPlayer(name=model_name)
         ppoAgent.initiate_agent(self.env)
-        # Now complete the first step
-        self.env.initialStep()
+        ppoAgent.play(nb_episodes=self.num_episodes, render=self.render)
+
+
+
+
+
+
+
+
+
+
+
+       #  ppoAgent = PPOPlayer(name = model_name)
+       #  self.env.add_player(ppoAgent)
+       #  #Have to delay step so that we can find the size of the env
+       #  self.env.reset(initialStep = False)
+       #  ppoAgent.initiate_agent(self.env)
+       #  # Now complete the first step
+       # # self.env.initialStep()
+       #  ppoAgent.play(nb_episodes=self.num_episodes, render = self.render)
 
 
 

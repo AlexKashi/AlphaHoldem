@@ -1,7 +1,5 @@
 """manual keypress agent"""
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
-from rl.memory import SequentialMemory
+#from rl.memory import SequentialMemory
 import time
 
 from agents.agent_keras_rl_dqn import TrumpPolicy, memory_limit, window_length
@@ -44,15 +42,19 @@ class Player:
 
         set_config('ppo')
         cfg.alg.num_envs = 1
-        cfg.alg.episode_steps = 16
-        cfg.alg.log_interval = 1
-        cfg.alg.eval_interval = 1
-        cfg.alg.max_steps = 100
+        cfg.alg.episode_steps = 512
+        cfg.alg.log_interval = 2
+        cfg.alg.eval_interval = 2
+        cfg.alg.max_steps = cfg.alg.episode_steps * 100
         cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        cfg.alg.env_name = "name"
+
+        print(cfg.alg.device)
+
+        cfg.alg.env_name = "PPO"
         cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
         cfg.alg.save_dir += '/' + "name"
 
+        self.device = cfg.alg.device 
 
      #   self.env = make_vec_env(name,1)
 
@@ -66,48 +68,37 @@ class Player:
         nb_obs = self.env.observation_space[0]
         nb_actions = self.env.action_space.n
 
-        # self.model = Sequential()
-        # self.model.add(Dense(512, activation='relu', input_shape=env.observation_space))  # pylint: disable=no-member
-        # self.model.add(Dropout(0.2))
-        # self.model.add(Dense(512, activation='relu'))
-        # self.model.add(Dropout(0.2))
-        # self.model.add(Dense(512, activation='relu'))
-        # self.model.add(Dropout(0.2))
-        # self.model.add(Dense(nb_actions, activation='linear'))
+        nlayers = 3
+        nnodes = 512
+
+
      #   assert False
         actor_body = MLP(input_size=nb_obs,
-                         hidden_sizes=[64, 64],
-                         output_size=64,
+                         hidden_sizes=[nnodes] * nlayers,
+                         output_size=nnodes,
                          hidden_act=nn.Tanh,
-                         output_act=nn.Tanh)
+                         output_act=nn.Tanh).to(self.device)
+
 
         critic_body = MLP(input_size=nb_obs,
-                         hidden_sizes=[64, 64],
-                         output_size=64,
+                         hidden_sizes=[nnodes] * nlayers,
+                         output_size=nnodes,
                          hidden_act=nn.Tanh,
-                         output_act=nn.Tanh)
- 
+                         output_act=nn.Tanh).to(self.device)
 
+ 
         if isinstance(env.action_space, gym.spaces.Discrete):
-            act_size = env.action_space.n
             self.actor = CategoricalPolicy(actor_body,
-                                     in_features=64,
-                                     action_dim=act_size)
-        elif isinstance(env.action_space, gym.spaces.Box):
-            act_size = env.action_space.shape[0]
-            self.actor = DiagGaussianPolicy(actor_body,
-                                       in_features=64,
-                                       action_dim=act_size,
-                                       tanh_on_dist=cfg.alg.tanh_on_dist,
-                                       std_cond_in=cfg.alg.std_cond_in)
+                                     in_features=nnodes,
+                                     action_dim=nb_actions)
         else:
             raise TypeError(f'Unknown action space type: {env.action_space}')
 
            
-        self.critic = ValueNet(critic_body, in_features=64)
+        self.critic = ValueNet(critic_body, in_features=nnodes)
         self.agent = PPOAgent(actor=self.actor, critic=self.critic, env=self.envwrapped)
-        # # Finally, we configure and compile our agent. You can use every built-in Keras optimizer and
-        # # even the metrics!
+
+
         # memory = SequentialMemory(limit=memory_limit, window_length=window_length)  # pylint: disable=unused-variable
         # policy = TrumpPolicy()  # pylint: disable=unused-variable
 
@@ -126,6 +117,8 @@ class Player:
 
         # env = make_vec_env("neuron_poker-v0",
         #                    1)
+
+
 
 
         runner = EpisodicRunner(agent=self.agent, env=self.envwrapped)
@@ -147,6 +140,40 @@ class Player:
         # self.dqn.test(self.env, nb_episodes=5, visualize=False)
 
 
+
+
+
+    def play(self, nb_episodes=5, render=True):
+        """Let the agent play"""
+
+        set_config('ppo')
+        cfg.alg.num_envs = 1
+        cfg.alg.episode_steps = 512
+        cfg.alg.log_interval = 2
+        cfg.alg.eval_interval = 2
+        cfg.alg.max_steps = cfg.alg.episode_steps * 100
+        cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+        print(cfg.alg.device)
+        cfg.alg.test = True
+
+        skip_params = ['test_num', "num_envs", "sample_action"]
+        cfg.alg.restore_cfg(skip_params=skip_params, path = Path("data/ppo-equity-run-1/default/seed_0"))
+
+        print(cfg.alg.resume, cfg.alg.test)
+       # assert False
+
+        runner = EpisodicRunner(agent=self.agent, env=self.envwrapped)
+        engine = PPOEngine(agent=self.agent,
+                           runner=runner)
+   
+        stat_info, raw_traj_info = engine.eval(render=render,
+                                               save_eval_traj=False,
+                                               eval_num=nb_episodes,
+                                               sleep_time=0.04)
+
+        import pprint
+        pprint.pprint(stat_info)
 
 
 
