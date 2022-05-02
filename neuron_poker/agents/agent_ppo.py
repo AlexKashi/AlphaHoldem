@@ -41,18 +41,23 @@ class Player:
         self.model = None
 
         set_config('ppo')
+
+        episode_steps = 64
+        itters = 1000
+        print(f"Training for {episode_steps * itters} Steps!")
         cfg.alg.num_envs = 1
-        cfg.alg.episode_steps = 512
+        cfg.alg.episode_steps = episode_steps
         cfg.alg.log_interval = 2
         cfg.alg.eval_interval = 2
-        cfg.alg.max_steps = cfg.alg.episode_steps * 100
+        cfg.alg.max_steps = episode_steps * itters
         cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         print(cfg.alg.device)
 
-        cfg.alg.env_name = "PPO"
+        now = time.strftime("%Y-%m-%d-%H:%M:%S")
+        cfg.alg.env_name = f"PPO-{now}"
         cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
-        cfg.alg.save_dir += '/' + "name"
+        cfg.alg.save_dir += '/' + cfg.alg.env_name
 
         self.device = cfg.alg.device 
 
@@ -158,7 +163,10 @@ class Player:
         cfg.alg.test = True
 
         skip_params = ['test_num', "num_envs", "sample_action"]
-        cfg.alg.restore_cfg(skip_params=skip_params, path = Path("data/ppo-equity-run-1/default/seed_0"))
+
+        # path = "data/PPO/default/seed_0"
+        path = "data/ppo-equity-run-1/default/seed_0"
+        cfg.alg.restore_cfg(skip_params=skip_params, path = Path(path))
 
         print(cfg.alg.resume, cfg.alg.test)
        # assert False
@@ -175,7 +183,22 @@ class Player:
         import pprint
         pprint.pprint(stat_info)
 
+    def read_tf_log(log_dir, scalar='train/episode_return/mean'):
+        log_dir = Path(log_dir)
+        log_files = list(log_dir.glob(f'**/events.*'))
+        if len(log_files) < 1:
+            return None
+        log_file = log_files[0]
 
+        event_acc = EventAccumulator(log_file.as_posix())
+        event_acc.Reload()
+        tags = event_acc.Tags()
+
+        scalar_return = event_acc.Scalars(scalar)
+        returns = [x.value for x in scalar_return]
+        steps = [x.step for x in scalar_return]
+
+        return steps, returns
 
     def action(self, action_space, observation, info):  # pylint: disable=no-self-use,unused-argument
         """Mandatory method that calculates the move based on the observation array and the action space."""

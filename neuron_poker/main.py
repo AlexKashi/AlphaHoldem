@@ -103,6 +103,7 @@ class SelfPlay:
         self.winner_in_episodes = []
         self.use_cpp_montecarlo = use_cpp_montecarlo
         self.funds_plot = funds_plot
+
         self.render = render
         self.env = None
         self.num_episodes = num_episodes
@@ -206,20 +207,8 @@ class SelfPlay:
         env.seed(123)
         env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
         # env.add_player(EquityPlayer(name='equity/20/30', min_call_equity=.2, min_bet_equity=.3))
-        # env.add_player(RandomPlayer())
-        # env.add_player(RandomPlayer())
-        # env.add_player(RandomPlayer())
+
         self.env = env
-        # dqnAgent = DQNPlayer(env = env)
-        # self.env.add_player(dqnAgent)
-        # #Have to delay step so that we can find the size of the env
-        # self.env.reset(initialStep = False)
-        # dqnAgent.initiate_agent(self.env)
-        # dqnAgent.train(env_name=model_name)
-
-
-
-
         env.add_player(PlayerShell(name='keras-rl', stack_size=self.stack))  # shell is used for callback to keras rl
 
         env.reset()
@@ -240,38 +229,12 @@ class SelfPlay:
 
         np.random.seed(123)
         self.env.seed(123)
-        # self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
-        # self.env.add_player(EquityPlayer(name='equity/20/30', min_call_equity=.2, min_bet_equity=.3))
-        # self.env.add_player(RandomPlayer())
-        # self.env.add_player(RandomPlayer())
         self.env.add_player(RandomPlayer())
-        # self.env.add_player(RandomPlayer())
-
-
-
-
-        self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
         self.env.add_player(PlayerShell(name='ppo', stack_size=self.stack))  # shell is used for callback to keras rl
         self.env.reset()
-
-
         ppoAgent = PPOPlayer(name = model_name)
         ppoAgent.initiate_agent(self.env)
-    
         ppoAgent.train(env_name = model_name)
-
-
-        # ppoAgent = PPOPlayer(name = model_name)
-
-        # self.env.add_player(ppoAgent)
-        # #Have to delay step so that we can find the size of the env
-        # self.env.reset(initialStep = False)
-        # ppoAgent.initiate_agent(self.env)
-        # # Now complete the first step
-        # # self.env.initialStep()
-
-        # ppoAgent.train(env_name=model_name)
-
 
 
     def ppo_play(self, model_name):
@@ -282,8 +245,14 @@ class SelfPlay:
         from agents.agent_random import Player as RandomPlayer
         env_name = 'neuron_poker-v0'
 
-        self.env = gym.make(env_name, initial_stacks=self.stack, render=self.render)
-        self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
+        self.env = gym.make(env_name, initial_stacks=self.stack, funds_plot=self.funds_plot, render=self.render,
+                       use_cpp_montecarlo=self.use_cpp_montecarlo)
+
+        np.random.seed(123)
+        self.env.seed(123)
+        self.env.add_player(RandomPlayer())
+
+        # self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
 
 
 
