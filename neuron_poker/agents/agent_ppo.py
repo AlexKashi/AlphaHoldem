@@ -30,7 +30,7 @@ from easyrl.utils.common import load_from_json
 class Player:
     """Mandatory class with the player methods"""
 
-    def __init__(self, name):
+    def __init__(self, name, load_model=None):
         """Initiaization of an agent"""
         self.equity_alive = 0
         self.actions = []
@@ -39,9 +39,17 @@ class Player:
         self.name = name
         self.autoplay = True
         self.model = None
+        self.load_model = load_model
+
 
         set_config('ppo')
-
+        load_model = False
+        if(load_model):
+            self.load()
+        else:
+            now = time.strftime("%Y-%m-%d-%H:%M:%S")
+            cfg.alg.env_name = f"PPO-{now}"
+            cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
         episode_steps = 64
         itters = 1000
         print(f"Training for {episode_steps * itters} Steps!")
@@ -52,16 +60,23 @@ class Player:
         cfg.alg.max_steps = episode_steps * itters
         cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+        self.device = cfg.alg.device
         print(cfg.alg.device)
 
-        now = time.strftime("%Y-%m-%d-%H:%M:%S")
-        cfg.alg.env_name = f"PPO-{now}"
-        cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
-        cfg.alg.save_dir += '/' + cfg.alg.env_name
 
-        self.device = cfg.alg.device 
 
      #   self.env = make_vec_env(name,1)
+
+
+
+    def load(self, path = None):
+        """Load a model"""
+        cfg.alg.resume = True
+        if path is None:
+            path = "data/PPO/default/seed_0"
+        print(f"Loading: {path}")
+        cfg.alg.restore_cfg(skip_params=[], path = Path(path))
+
 
     def initiate_agent(self, env):
         self.env = env
@@ -165,7 +180,7 @@ class Player:
         skip_params = ['test_num', "num_envs", "sample_action"]
 
         # path = "data/PPO/default/seed_0"
-        path = "data/ppo-equity-run-1/default/seed_0"
+        path = "data/PPO-2022-05-02-16:55:32/default/seed_0"
         cfg.alg.restore_cfg(skip_params=skip_params, path = Path(path))
 
         print(cfg.alg.resume, cfg.alg.test)

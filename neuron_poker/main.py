@@ -230,9 +230,10 @@ class SelfPlay:
         np.random.seed(123)
         self.env.seed(123)
         self.env.add_player(RandomPlayer())
+        # self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
         self.env.add_player(PlayerShell(name='ppo', stack_size=self.stack))  # shell is used for callback to keras rl
         self.env.reset()
-        ppoAgent = PPOPlayer(name = model_name)
+        ppoAgent = PPOPlayer(name = model_name, load_model = True)
         ppoAgent.initiate_agent(self.env)
         ppoAgent.train(env_name = model_name)
 
@@ -250,9 +251,9 @@ class SelfPlay:
 
         np.random.seed(123)
         self.env.seed(123)
-        self.env.add_player(RandomPlayer())
+        # self.env.add_player(RandomPlayer())
 
-        # self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
+        self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
 
 
 
