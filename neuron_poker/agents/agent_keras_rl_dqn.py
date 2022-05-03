@@ -52,7 +52,7 @@ class Player:
 
 
         if load_model:
-            self.load(load_model)
+            self.load(name)
 
     def initiate_agent(self, env):
         """initiate a deep Q agent"""
@@ -119,16 +119,17 @@ class Player:
 
         #skip loading
       #  print("SKIPPING LOADING!")
-        return
+        # return
 
-        fileName = "output/dqn_target_dueling_v2"
-
+        # fileName = "output/dqn_target_dueling_v2"
+        fileName = env_name
         # Load the architecture
-        with open('{}.json'.format(fileName), 'r') as architecture_json:
+        with open('{}_json.json'.format(fileName), 'r') as architecture_json:
             dqn_json = json.load(architecture_json)
 
         self.model = model_from_json(dqn_json)
-        self.model.load_weights('{}.h5'.format(fileName))
+        self.model.load_weights('{}_weights.h5'.format(fileName))
+
 
     def play(self, nb_episodes=5, render=False):
         """Let the agent play"""

@@ -15,22 +15,25 @@ import base64
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 def read_tf_log(log_dir, scalar='train/episode_return/mean'):
     log_dir = Path(log_dir)
-    log_files = list(log_dir.glob(f'**/events.*'))
+    log_files = sorted(list(log_dir.glob(f'**/events.*')))
     if len(log_files) < 1:
         return None
-    log_file = log_files[0]
+    steps = [0]
+    returns = []
+    for log_file in log_files:
+ #   log_file = log_files[-1]
+        try:
+            event_acc = EventAccumulator(log_file.as_posix())
+            event_acc.Reload()
+            tags = event_acc.Tags()
+            scalar_return = event_acc.Scalars(scalar)
+            returns.extend([x.value for x in scalar_return])
+            s_0 = steps[-1] - scalar_return[0].step
+            steps.extend([x.step + s_0  for x in scalar_return])
+        except:
+            pass
 
-    event_acc = EventAccumulator(log_file.as_posix())
-    event_acc.Reload()
-
-    tags = event_acc.Tags()
-  #  print(tags)
-#    assert False
-    scalar_return = event_acc.Scalars(scalar)
-    returns = [x.value for x in scalar_return]
-    steps = [x.step for x in scalar_return]
-
-    return steps, returns
+    return steps[1:], returns
 
 
 # 'scalars': ['train/vf_loss',\
@@ -68,10 +71,17 @@ def read_tf_log(log_dir, scalar='train/episode_return/mean'):
 # 'sto/eval/episode_length/mean',
 # 'sto/eval/episode_length/median']
 
+
 def main():
     logDir = "data/ppo-equity-run-1/"
     logDir = "data/PPO-2022-05-02-16:53:32/" #equity
-  #  logDir = "data/PPO-2022-05-02-16:55:32/" #random
+   # logDir = "data/PPO-2022-05-02-16:55:32/" #random
+
+
+    #new data
+
+  #  logDir = "data/PPO-2022-05-03-00:30:20"
+ #   logDir = "data/PPO-2022-05-03-00:30:38"
   #  logDir = "data/PPO"
    # steps, returns = read_tf_log(logDir)
     steps, returns = read_tf_log(logDir, scalar = "train/episode_return/mean")

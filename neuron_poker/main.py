@@ -257,7 +257,7 @@ class SelfPlay:
 
         env.reset()
 
-        dqn = DQNPlayer(env = self.env, load_model = True, enable_double_dqn = enable_double_dqn, enable_dueling_network = enable_dueling_network)
+        dqn = DQNPlayer(env = self.env,name = model_name, load_model = True, enable_double_dqn = enable_double_dqn, enable_dueling_network = enable_dueling_network)
         dqn.initiate_agent(self.env)
         dqn.train(env_name=model_name)
 
