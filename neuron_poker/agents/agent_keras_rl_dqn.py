@@ -28,16 +28,14 @@ train_interval = 100  # train every 100 steps
 nb_steps_warmup = 50  # before training starts, should be higher than start steps
 nb_steps = 1000000
 memory_limit = int(nb_steps / 2)
-batch_size = 500  # items sampled from memory to train
-enable_double_dqn = True
-enable_dueling_network= True
+batch_size = 1024  # items sampled from memory to train
 log = logging.getLogger(__name__)
 log.setLevel(logging.WARNING)
 
 class Player:
     """Mandatory class with the player methods"""
 
-    def __init__(self, name='DQN', load_model=None, env=None):
+    def __init__(self, name='DQN', load_model=None, env=None, enable_double_dqn = False, enable_dueling_network = False):
         """Initiaization of an agent"""
         self.equity_alive = 0
         self.actions = []
@@ -49,6 +47,9 @@ class Player:
         self.dqn = None
         self.model = None
         self.env = env
+        self.enable_double_dqn = enable_double_dqn
+        self.enable_dueling_network = enable_dueling_network
+
 
         if load_model:
             self.load(load_model)
@@ -76,11 +77,11 @@ class Player:
         policy = TrumpPolicy()
 
         nb_actions = env.action_space.n
-
+        print(f"Is Double DQN: {self.enable_double_dqn} is Dueling DQN: {self.enable_dueling_network}")
         self.dqn = DQNAgent(model=self.model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=nb_steps_warmup,
                             target_model_update=1e-2, policy=policy,
                             processor=CustomProcessor(),
-                            batch_size=batch_size, train_interval=train_interval, enable_double_dqn=enable_double_dqn, enable_dueling_network=True, dueling_type="avg")
+                            batch_size=batch_size, train_interval=train_interval, enable_double_dqn=self.enable_double_dqn , enable_dueling_network=self.enable_dueling_network , dueling_type="avg")
         self.dqn.compile(Adam(lr=1e-3), metrics=['mae'])
 
     def start_step_policy(self, observation):

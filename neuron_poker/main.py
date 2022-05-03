@@ -17,14 +17,46 @@ options:
   -r --render               render screen
   -c --use_cpp_montecarlo   use cpp implementation of equity calculator. Requires cpp compiler but is 500x faster
   -f --funds_plot           Plot funds at end of episode
+  --double_dqn              Enable Double DQN (DQN Only)
+  --dueling_dqn             Enable Dueling DQN (DQN Only)
+  --random                  Play Against Random Agent
   --log                     log file
   --name=<>                 Name of the saved model
   --screenloglevel=<>       log level on screen
   --episodes=<>             number of episodes to play
   --stack=<>                starting stack for each player [default: 500].
+"""
+"""
+Train agent against equity 
+    #Retrain longest
+    python main.py selfplay ppo_train --name data/PPO-2022-05-02-16:53:32/default/seed_0
+
+    # two repeats 
+    PPO-2022-05-03-00:29:59
+    PPO-2022-05-03-00:30:14
+
+    # Fresh
+    python main.py selfplay ppo_train 
+
+Train agent against random 
+    #longest
+    python main.py selfplay ppo_train --name data/PPO-2022-05-02-16:55:32/default/seed_0 --random
+
+    #Two repeats
+    PPO-2022-05-03-00:30:20
+    PPO-2022-05-03-00:30:38
+
+
+    # Fresh
+    python main.py selfplay ppo_train --random
+
+
+#DQN
+
+python main.py selfplay dqn_train 
+python main.py selfplay dqn_train --double_dqn
 
 """
-
 import logging
 
 import gym
@@ -42,6 +74,18 @@ from tools.helper import init_logger
 def command_line_parser():
     """Entry function"""
     args = docopt(__doc__)
+    random = False
+    enable_double_dqn = False
+    enable_dueling_network = False
+    if args["--random"]:
+        random = True
+
+    if args["--double_dqn"]:
+        enable_double_dqn = True
+
+    if args["--dueling_dqn"]:
+        enable_dueling_network = True
+
     if args['--log']:
         logfile = args['--log']
     else:
@@ -77,16 +121,16 @@ def command_line_parser():
             runner.equity_self_improvement(improvement_rounds)
 
         elif args['dqn_train']:
-            runner.dqn_train_keras_rl(model_name)
+            runner.dqn_train_keras_rl(model_name, enable_double_dqn = enable_double_dqn, enable_dueling_network = enable_dueling_network)
 
         elif args['dqn_play']:
-            runner.dqn_play_keras_rl(model_name)
+            runner.dqn_play_keras_rl(model_name, enable_double_dqn = enable_double_dqn, enable_dueling_network = enable_dueling_network)
 
         elif args['ppo_train']:
-            runner.ppo_train(model_name)
+            runner.ppo_train(model_name, random = random)
 
         elif args['ppo_play']:
-            runner.ppo_play(model_name)
+            runner.ppo_play(model_name, random = random)
 
 
 
@@ -194,7 +238,7 @@ class SelfPlay:
                 betting[i] = np.mean([betting[i], betting[best_player]])
                 self.log.info(f"New betting for player {i} is {betting[i]}")
 
-    def dqn_train_keras_rl(self, model_name):
+    def dqn_train_keras_rl(self, model_name, enable_double_dqn = False, enable_dueling_network = False):
         """Implementation of kreras-rl deep q learing."""
         from agents.agent_consider_equity import Player as EquityPlayer
         from agents.agent_keras_rl_dqn import Player as DQNPlayer
@@ -213,32 +257,41 @@ class SelfPlay:
 
         env.reset()
 
-        dqn = DQNPlayer(env = self.env, load_model = True)
+        dqn = DQNPlayer(env = self.env, load_model = True, enable_double_dqn = enable_double_dqn, enable_dueling_network = enable_dueling_network)
         dqn.initiate_agent(self.env)
         dqn.train(env_name=model_name)
 
-    def ppo_train(self, model_name):
+    def ppo_train(self, model_name, random = False):
         from agents.agent_ppo import Player as PPOPlayer
         from agents.agent_consider_equity import Player as EquityPlayer
         from agents.agent_keras_rl_dqn import Player as DQNPlayer
         from agents.agent_random import Player as RandomPlayer
         env_name = 'neuron_poker-v0'
+       
+
+        if model_name == "dqn1":
+            model_name = None
+
 
         self.env = gym.make(env_name, initial_stacks=self.stack, funds_plot=self.funds_plot, render=self.render,
                        use_cpp_montecarlo=self.use_cpp_montecarlo)
 
         np.random.seed(123)
         self.env.seed(123)
-        self.env.add_player(RandomPlayer())
-        # self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
+        if random:
+            print("Adding Random Agent")
+            self.env.add_player(RandomPlayer())
+        else:
+            print("Adding Equity Agent")
+            self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
         self.env.add_player(PlayerShell(name='ppo', stack_size=self.stack))  # shell is used for callback to keras rl
         self.env.reset()
-        ppoAgent = PPOPlayer(name = model_name, load_model = True)
+        ppoAgent = PPOPlayer(name = model_name)
         ppoAgent.initiate_agent(self.env)
         ppoAgent.train(env_name = model_name)
 
 
-    def ppo_play(self, model_name):
+    def ppo_play(self, model_name, random = False):
         """Create 6 players, one of them a trained DQN"""
         from agents.agent_ppo import Player as PPOPlayer
         from agents.agent_consider_equity import Player as EquityPlayer
@@ -246,15 +299,21 @@ class SelfPlay:
         from agents.agent_random import Player as RandomPlayer
         env_name = 'neuron_poker-v0'
 
+        if model_name == "dqn1":
+            model_name = None
+
         self.env = gym.make(env_name, initial_stacks=self.stack, funds_plot=self.funds_plot, render=self.render,
                        use_cpp_montecarlo=self.use_cpp_montecarlo)
 
         np.random.seed(123)
         self.env.seed(123)
-        # self.env.add_player(RandomPlayer())
 
-        self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
-
+        if random:
+            print("Adding Random Agent")
+            self.env.add_player(RandomPlayer())
+        else:
+            print("Adding Equity Agent")
+            self.env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
 
 
         self.env.add_player(PlayerShell(name='ppo', stack_size=self.stack))
@@ -286,7 +345,7 @@ class SelfPlay:
 
 
 
-    def dqn_play_keras_rl(self, model_name):
+    def dqn_play_keras_rl(self, model_name, enable_double_dqn = False, enable_dueling_network = False):
         """Create 6 players, one of them a trained DQN"""
         from agents.agent_consider_equity import Player as EquityPlayer
         from agents.agent_keras_rl_dqn import Player as DQNPlayer
@@ -302,7 +361,7 @@ class SelfPlay:
 
         self.env.reset()
 
-        dqn = DQNPlayer(load_model=model_name, env=self.env)
+        dqn = DQNPlayer(load_model=model_name, env=self.env, enable_double_dqn = enable_double_dqn, enable_dueling_network = enable_dueling_network)
         dqn.play(nb_episodes=self.num_episodes, render=self.render)
 
 

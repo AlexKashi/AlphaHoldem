@@ -70,12 +70,14 @@ def read_tf_log(log_dir, scalar='train/episode_return/mean'):
 
 def main():
     logDir = "data/ppo-equity-run-1/"
+    logDir = "data/PPO-2022-05-02-16:53:32/" #equity
+  #  logDir = "data/PPO-2022-05-02-16:55:32/" #random
   #  logDir = "data/PPO"
    # steps, returns = read_tf_log(logDir)
-   # steps, returns = read_tf_log(logDir, scalar = "train/rollout_steps_per_iter")
-   # #determanistic
-    steps, returns = read_tf_log(logDir, scalar = "det/eval/smooth_return/mean")
-    steps, returns = read_tf_log(logDir, scalar = "det/eval/episode_length/mean")
+    steps, returns = read_tf_log(logDir, scalar = "train/episode_return/mean")
+    # #determanistic
+ #   steps, returns = read_tf_log(logDir, scalar = "det/eval/smooth_return/mean")
+    #steps, returns = read_tf_log(logDir, scalar = "det/eval/episode_length/mean")
    # steps, returns = read_tf_log(logDir, scalar = "train/rollout_steps_per_iter")
 
     plt.title("PPO Average Reward")

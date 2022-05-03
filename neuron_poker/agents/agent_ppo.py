@@ -30,7 +30,7 @@ from easyrl.utils.common import load_from_json
 class Player:
     """Mandatory class with the player methods"""
 
-    def __init__(self, name, load_model=None):
+    def __init__(self, name):
         """Initiaization of an agent"""
         self.equity_alive = 0
         self.actions = []
@@ -39,19 +39,17 @@ class Player:
         self.name = name
         self.autoplay = True
         self.model = None
-        self.load_model = load_model
 
 
         set_config('ppo')
-        load_model = False
-        if(load_model):
-            self.load()
+        if(name is not None):
+            self.load(name)
         else:
             now = time.strftime("%Y-%m-%d-%H:%M:%S")
             cfg.alg.env_name = f"PPO-{now}"
             cfg.alg.save_dir = Path.cwd().absolute().joinpath('data').as_posix()
-        episode_steps = 64
-        itters = 1000
+        episode_steps = 128
+        itters = 10000
         print(f"Training for {episode_steps * itters} Steps!")
         cfg.alg.num_envs = 1
         cfg.alg.episode_steps = episode_steps
@@ -73,6 +71,7 @@ class Player:
         """Load a model"""
         cfg.alg.resume = True
         if path is None:
+            print("Path is empty, using default!")
             path = "data/PPO/default/seed_0"
         print(f"Loading: {path}")
         cfg.alg.restore_cfg(skip_params=[], path = Path(path))
