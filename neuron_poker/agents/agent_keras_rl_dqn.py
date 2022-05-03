@@ -164,14 +164,13 @@ class Player:
 
     def action(self, action_space, observation, info):  # pylint: disable=no-self-use
         """Mandatory method that calculates the move based on the observation array and the action space."""
-        _ = observation  # not using the observation for random decision
-        _ = info
 
-        this_player_action_space = {Action.FOLD, Action.CHECK, Action.CALL, Action.RAISE_POT, Action.RAISE_HALF_POT,
-                                    Action.RAISE_2POT}
-        _ = this_player_action_space.intersection(set(action_space))
+        this_player_action_space = [Action.FOLD, Action.CHECK, Action.CALL, Action.RAISE_POT, Action.RAISE_HALF_POT,
+                                    Action.RAISE_2POT]
 
-        action = None
+        action = self.dqn.forward(observation)
+        if this_player_action_space[action] not in set(action_space):
+            return np.random.choice(list(action_space))
         return action
 
 

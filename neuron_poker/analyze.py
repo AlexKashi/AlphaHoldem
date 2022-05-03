@@ -80,10 +80,12 @@ def main():
 
     #new data
 
-  #  logDir = "data/PPO-2022-05-03-00:30:20"
- #   logDir = "data/PPO-2022-05-03-00:30:38"
+    logDir = "data/PPO-2022-05-03-00:30:20"
+    logDir = "data/PPO-2022-05-03-00:30:38"
   #  logDir = "data/PPO"
    # steps, returns = read_tf_log(logDir)
+
+   
     steps, returns = read_tf_log(logDir, scalar = "train/episode_return/mean")
     # #determanistic
  #   steps, returns = read_tf_log(logDir, scalar = "det/eval/smooth_return/mean")
@@ -98,3 +100,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

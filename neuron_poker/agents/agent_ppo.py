@@ -167,19 +167,21 @@ class Player:
 
         set_config('ppo')
         cfg.alg.num_envs = 1
-        cfg.alg.episode_steps = 512
+        cfg.alg.episode_steps = 2048
         cfg.alg.log_interval = 2
         cfg.alg.eval_interval = 2
         cfg.alg.max_steps = cfg.alg.episode_steps * 100
         cfg.alg.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-        print(cfg.alg.device)
         cfg.alg.test = True
 
         skip_params = ['test_num', "num_envs", "sample_action"]
 
         # path = "data/PPO/default/seed_0"
-        path = "data/PPO-2022-05-02-16:55:32/default/seed_0"
+        path = self.name        
+
+       # if path is none:
+       #     path = "data/PPO-2022-05-02-16:55:32/default/seed_0"
+ 
         cfg.alg.restore_cfg(skip_params=skip_params, path = Path(path))
 
         print(cfg.alg.resume, cfg.alg.test)
@@ -217,7 +219,7 @@ class Player:
     def action(self, action_space, observation, info):  # pylint: disable=no-self-use,unused-argument
         """Mandatory method that calculates the move based on the observation array and the action space."""
         _ = (observation, info)  # not using the observation for random decision
-        assert False
-        action = self.agent.get_action(observation)[0].tolist()
-        return None
+        
+        action = self.agent.get_action(observation, sample = True)[0]
+        print(action)
         return action
