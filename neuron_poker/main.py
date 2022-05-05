@@ -46,7 +46,6 @@ Train agent against random
     PPO-2022-05-03-00:30:20
     PPO-2022-05-03-00:30:38
 
-
     # Fresh
     python main.py selfplay ppo_train --random
 
@@ -249,7 +248,8 @@ class SelfPlay:
 
         np.random.seed(123)
         env.seed(123)
-        env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
+        env.add_player(RandomPlayer())
+        # env.add_player(EquityPlayer(name='equity/50/70', min_call_equity=.5, min_bet_equity=.7))
         # env.add_player(EquityPlayer(name='equity/20/30', min_call_equity=.2, min_bet_equity=.3))
 
         self.env = env
@@ -323,7 +323,6 @@ class SelfPlay:
         ppoAgent = PPOPlayer(name=model_name)
         ppoAgent.initiate_agent(self.env)
         ppoAgent.play(nb_episodes=self.num_episodes, render=self.render)
-
 
 
 

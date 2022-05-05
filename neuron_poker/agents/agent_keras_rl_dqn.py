@@ -118,8 +118,8 @@ class Player:
       #  assert False
 
         #skip loading
-      #  print("SKIPPING LOADING!")
-        # return
+
+        print("LOADING", env_name)
 
         # fileName = "output/dqn_target_dueling_v2"
         fileName = env_name
@@ -157,7 +157,7 @@ class Player:
         self.dqn = DQNAgent(model=self.model, nb_actions=nb_actions, memory=memory, nb_steps_warmup=nb_steps_warmup,
                             target_model_update=1e-2, policy=policy,
                             processor=CustomProcessor(),
-                            batch_size=batch_size, train_interval=train_interval, enable_double_dqn=enable_double_dqn)
+                            batch_size=batch_size, train_interval=train_interval, enable_double_dqn=self.enable_double_dqn)
         self.dqn.compile(Adam(lr=1e-3), metrics=['mae'])  # pylint: disable=no-member
 
         self.dqn.test(self.env, nb_episodes=nb_episodes, visualize=render)

@@ -198,6 +198,7 @@ class Player:
 
         import pprint
         pprint.pprint(stat_info)
+        return stat_info, raw_traj_info
 
     def read_tf_log(log_dir, scalar='train/episode_return/mean'):
         log_dir = Path(log_dir)
